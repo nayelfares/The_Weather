@@ -7,8 +7,7 @@ data class CurrentWeatherResponse(
     val humidity :Int,
     val feelslike_c:Float,
     val feelslike_f :Float,
-    val vis_km :Float,
-    val vis_miles :Float
+    val wind_kph :Float
 )
 data class Location (
             val name : String,

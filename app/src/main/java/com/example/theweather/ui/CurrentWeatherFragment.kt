@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.theweather.R
 import com.example.theweather.WeatherViewModel
 import com.example.theweather.base.DataState
@@ -46,8 +47,14 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
             viewLifecycleOwner, {
                 when (it) {
                     is DataState.Success<CurrentWeatherResponse> -> {
+                        Glide.with(requireActivity())
+                            .load("http:/"+it.data.current.condition.icon)
+                            .into(icon)
                         status.text = it.data.current.condition.text
                         tempratureC.text = it.data.current.temp_c.toString()
+                        city.text  = it.data.location.name
+                        humidity.text = it.data.humidity.toString()
+                        wind.text= it.data.wind_kph.toString()
                         loading.visibility = View.GONE
 
                     }
