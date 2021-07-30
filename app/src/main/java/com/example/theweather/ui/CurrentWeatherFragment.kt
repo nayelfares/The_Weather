@@ -49,6 +49,9 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
         addCity.setOnClickListener {
             (requireActivity() as MainActivity).replaceFragmentFromMain(SearchFragment.newInstance())
         }
+        selectCity.setOnClickListener {
+            FavoritCities.newInstance().show(requireActivity().supportFragmentManager,"Favorite Cities")
+        }
         if (currentWeather==null)
             lifecycleScope.launch {
                 weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
