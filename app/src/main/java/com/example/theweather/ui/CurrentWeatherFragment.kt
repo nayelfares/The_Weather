@@ -5,11 +5,15 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.theweather.MainActivity
 import com.example.theweather.R
 import com.example.theweather.WeatherViewModel
 import com.example.theweather.base.DataState
 import com.example.theweather.intent.WeatherIntent
 import com.example.theweather.model.CurrentWeatherResponse
+import com.example.theweather.room.CurrentWeatherCacheEntity
+import com.example.theweather.room.CurrentWeatherDao
+import com.example.theweather.room.toCurrentWeatherCacheEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_current_weather.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,21 +28,40 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
     private var location: String? = null
+    private var currentWeather:CurrentWeatherCacheEntity?=null
     @Inject
     lateinit var weatherViewModel: WeatherViewModel
+
+    @Inject
+    lateinit var currentWeatherDao: CurrentWeatherDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             location = it.getString("location")
+            currentWeather = it.getSerializable("currentWeather") as CurrentWeatherCacheEntity?
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeObservers()
-        lifecycleScope.launch {
-            weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
+        addCity.setOnClickListener {
+            (requireActivity() as MainActivity).addFragmentFromMain(SearchFragment.newInstance())
+        }
+        if (currentWeather==null)
+            lifecycleScope.launch {
+                weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
+            }
+        else {
+            Glide.with(requireActivity())
+                .load("http:/"+currentWeather!!.icon)
+                .into(icon)
+            status.text = currentWeather!!.text
+            tempratureC.text = currentWeather!!.temp_c
+            city.text  = currentWeather!!.name
+            humidity.text = currentWeather!!.humidity
+            wind.text= currentWeather!!.wind_kph
         }
     }
 
@@ -47,6 +70,9 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
             viewLifecycleOwner, {
                 when (it) {
                     is DataState.Success<CurrentWeatherResponse> -> {
+                        lifecycleScope.launch {
+                            currentWeatherDao.insert(it.data.toCurrentWeatherCacheEntity(location!!))
+                        }
                         Glide.with(requireActivity())
                             .load("http:/"+it.data.current.condition.icon)
                             .into(icon)
@@ -71,10 +97,11 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
     companion object {
 
         @JvmStatic
-        fun newInstance(location: String) =
+        fun newInstance(location: String,currentWeatherCacheEntity: CurrentWeatherCacheEntity?=null) =
             CurrentWeatherFragment().apply {
                 arguments = Bundle().apply {
                     putString("location", location)
+                    putSerializable("currentWeather",currentWeatherCacheEntity)
                 }
             }
     }
