@@ -5,22 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/selectCity"
-        android:src="@drawable/ic_select_city"
-        android:background="@color/transparent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/addCity"
-        android:src="@drawable/ic_add_city"
-        android:background="@color/transparent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"

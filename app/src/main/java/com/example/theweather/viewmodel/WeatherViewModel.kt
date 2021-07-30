@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.theweather.base.DataState
 import com.example.theweather.intent.WeatherIntent
 import com.example.theweather.model.City
+import com.example.theweather.model.CurrentWeatherResponse
 import com.example.theweather.repository.WeatherRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,6 +42,7 @@ constructor(
             userIntent.consumeAsFlow().collect {
                 when(it){
                     is WeatherIntent.GetSuggestions-> getSuggestionsUpdateStates(it.query)
+                    is WeatherIntent.GetCurrentWeather-> getCurrentWeatherUpdateStates(it.query)
                 }
             }
         }
@@ -49,12 +51,25 @@ constructor(
     val suggestionsDataState: LiveData<DataState<ArrayList<City>>>
         get() = _suggestionsDataState
 
+    private val _currentWeatherDataState: MutableLiveData<DataState<CurrentWeatherResponse>> = MutableLiveData()
+    val currentWeatherDataState: LiveData<DataState<CurrentWeatherResponse>>
+        get() = _currentWeatherDataState
+
 
     fun getSuggestionsUpdateStates(query: String) {
         viewModelScope.launch {
             weatherRepo.getSuggestions(query)
                 .onEach { dataState ->
                     _suggestionsDataState.value = dataState
+                }.launchIn(viewModelScope)
+        }
+    }
+
+    fun getCurrentWeatherUpdateStates(query: String) {
+        viewModelScope.launch {
+            weatherRepo.getCurrentWeather(query)
+                .onEach { dataState ->
+                    _currentWeatherDataState.value = dataState
                 }.launchIn(viewModelScope)
         }
     }

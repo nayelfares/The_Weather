@@ -1,16 +1,10 @@
 package com.example.theweather.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.theweather.R
 import com.example.theweather.WeatherViewModel
 import com.example.theweather.adapter.CityAdapter
@@ -55,7 +49,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
             viewLifecycleOwner, {
                 when (it) {
                     is DataState.Success<ArrayList<City>> -> {
-                        results.adapter=CityAdapter(requireContext(),it.data)
+                        results.adapter=CityAdapter(requireActivity(),it.data)
                     }
                     is DataState.Error -> {
                         Log.e("Error",it.exception.toString())
