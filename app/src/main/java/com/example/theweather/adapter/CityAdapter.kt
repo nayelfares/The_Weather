@@ -10,22 +10,30 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.theweather.MainActivity
 import com.example.theweather.R
 import com.example.theweather.model.City
+import com.example.theweather.room.CityDao
+import com.example.theweather.room.CurrentWeatherDao
+import com.example.theweather.room.toCityCacheEntity
 import com.example.theweather.ui.CurrentWeatherFragment
 import kotlinx.android.synthetic.main.city_item.view.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
+import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
-class CityAdapter( val activity: Activity, val cities: ArrayList<City>): RecyclerView.Adapter<CityAdapter.ViewHolder>() {
-
+class CityAdapter(val activity: Activity,
+                  val lifecycleScope: CoroutineScope,
+                  var cityDao:CityDao,
+                  val cities: ArrayList<City>
+                  ): RecyclerView.Adapter<CityAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: CityAdapter.ViewHolder, position: Int) {
 
         holder.cityName.text = cities[position].name
 
         holder.itemView.setOnClickListener {
+            lifecycleScope.launch {
+                cityDao.insert(cities[position].toCityCacheEntity())
+            }
             (activity as MainActivity).supportFragmentManager.popBackStackImmediate()
             (activity as MainActivity).addFragmentFromMain(CurrentWeatherFragment.newInstance(cities[position].url))
         }

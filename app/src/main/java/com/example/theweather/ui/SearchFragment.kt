@@ -12,6 +12,7 @@ import com.example.theweather.base.BaseFragment
 import com.example.theweather.base.DataState
 import com.example.theweather.intent.WeatherIntent
 import com.example.theweather.model.City
+import com.example.theweather.room.CityDao
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +31,9 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
         @JvmStatic
         fun newInstance() = SearchFragment()
     }
-    
+    @Inject
+    lateinit var cityDao: CityDao
+
     @Inject
     lateinit var weatherViewModel: WeatherViewModel
 
@@ -49,7 +52,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
             viewLifecycleOwner, {
                 when (it) {
                     is DataState.Success<ArrayList<City>> -> {
-                        results.adapter=CityAdapter(requireActivity(),it.data)
+                        results.adapter=CityAdapter(requireActivity(),lifecycleScope,cityDao,it.data)
                     }
                     is DataState.Error -> {
                         Log.e("Error",it.exception.toString())

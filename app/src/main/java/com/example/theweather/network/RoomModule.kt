@@ -2,6 +2,7 @@ package com.example.theweather.network
 
 import android.content.Context
 import androidx.room.Room
+import com.example.theweather.room.CityDao
 import com.example.theweather.room.CurrentWeatherDao
 import com.example.theweather.room.TheWeatherDatabase
 import dagger.Module
@@ -35,8 +36,14 @@ object RoomModule {
     }
     @Singleton
     @Provides
-    fun provideArtistDao(theWeatherDatabase: TheWeatherDatabase): CurrentWeatherDao {
+    fun provideCurrentWeatherDao(theWeatherDatabase: TheWeatherDatabase): CurrentWeatherDao {
         return theWeatherDatabase.currentWeatherDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCityDao(theWeatherDatabase: TheWeatherDatabase): CityDao {
+        return theWeatherDatabase.cityDao()
     }
 
 }

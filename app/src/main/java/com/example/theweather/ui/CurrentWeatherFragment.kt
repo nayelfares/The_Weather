@@ -47,7 +47,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
         super.onViewCreated(view, savedInstanceState)
         subscribeObservers()
         addCity.setOnClickListener {
-            (requireActivity() as MainActivity).addFragmentFromMain(SearchFragment.newInstance())
+            (requireActivity() as MainActivity).replaceFragmentFromMain(SearchFragment.newInstance())
         }
         if (currentWeather==null)
             lifecycleScope.launch {
