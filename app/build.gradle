@@ -7,6 +7,12 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        staging {
+        }
+        release {
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -24,6 +30,14 @@ android {
         debug {
             buildConfigField "String", "BASE_URL", "\"http://api.weatherapi.com/v1/\""
             buildConfigField "String", "KEY", "\"881e7a51450948dda7154655213007\""
+            signingConfig signingConfigs.debug
+            debuggable = true
+            jniDebuggable = true
+        }
+        staging {
+            buildConfigField "String", "BASE_URL", "\"http://api.weatherapi.com/v1/\""
+            buildConfigField "String", "KEY", "\"881e7a51450948dda7154655213007\""
+            signingConfig signingConfigs.debug
             debuggable = true
             jniDebuggable = true
         }
@@ -31,6 +45,7 @@ android {
             buildConfigField "String", "BASE_URL", "\"http://api.weatherapi.com/v1/\""
             buildConfigField "String", "KEY", "\"881e7a51450948dda7154655213007\""
             minifyEnabled false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
