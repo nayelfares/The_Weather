@@ -12,4 +12,8 @@ interface CityDao {
 
     @Query("SELECT * FROM cities")
     suspend fun get():List<CityCacheEntity>
+
+    @Query("DELETE FROM cities WHERE id = :id ")
+    suspend fun delete(id:Long)
+
 }

@@ -17,15 +17,22 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.theweather.R
+import com.example.theweather.adapter.FavoriteCityAdapter
+import com.example.theweather.room.CityCacheEntity
+import com.example.theweather.room.CityDao
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_favorit_cities.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.launch
 import java.io.*
+import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -33,6 +40,9 @@ import java.io.*
 @AndroidEntryPoint
 class FavoritCities : BottomSheetDialogFragment() {
 
+    @Inject
+    lateinit var cityDao: CityDao
+    lateinit var favoriteCitiesList:ArrayList<CityCacheEntity>
     companion object {
         fun newInstance():FavoritCities{
             val fragment = FavoritCities()
@@ -48,7 +58,6 @@ class FavoritCities : BottomSheetDialogFragment() {
         @Nullable savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_favorit_cities, container, false)
-
         return view
     }
 
@@ -57,6 +66,10 @@ class FavoritCities : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch {
+            favoriteCitiesList = ArrayList(cityDao.get())
+            favoriteCities.adapter = FavoriteCityAdapter(requireActivity(),this@FavoritCities,lifecycleScope,cityDao,favoriteCitiesList)
+        }
 
     }
 

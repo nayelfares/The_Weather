@@ -2,11 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         app:layout_constraintTop_toTopOf="parent"
+        android:textSize="16sp"
+        android:gravity="start|center"
+        tools:text="damascus , Baramkkeh,Syria"
+        android:paddingStart="12dp"
         android:id="@+id/cityName"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
