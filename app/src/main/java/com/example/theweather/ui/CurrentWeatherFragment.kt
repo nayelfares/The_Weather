@@ -52,6 +52,17 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
         selectCity.setOnClickListener {
             FavoritCities.newInstance().show(requireActivity().supportFragmentManager,"Favorite Cities")
         }
+        swipToRefresh.setOnRefreshListener {
+            if (currentWeather==null)
+                lifecycleScope.launch {
+                    weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
+                }
+            else{
+                lifecycleScope.launch {
+                    weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(currentWeather!!.url))
+                }
+            }
+        }
         if (currentWeather==null)
             lifecycleScope.launch {
                 weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
@@ -91,6 +102,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
                         loading.visibility = View.GONE
                     }
                     else -> {
+                        swipToRefresh.isRefreshing = false
                         loading.visibility = View.VISIBLE
                     }
                 }
