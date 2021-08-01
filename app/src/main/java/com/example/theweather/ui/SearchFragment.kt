@@ -3,12 +3,13 @@ package com.example.theweather.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.theweather.R
 import com.example.theweather.WeatherViewModel
 import com.example.theweather.adapter.CityAdapter
-import com.example.theweather.base.BaseFragment
 import com.example.theweather.base.DataState
 import com.example.theweather.intent.WeatherIntent
 import com.example.theweather.model.City
@@ -25,7 +26,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 @AndroidEntryPoint
-class SearchFragment : BaseFragment(R.layout.fragment_search) {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
     companion object {
         @JvmStatic
@@ -55,7 +56,7 @@ class SearchFragment : BaseFragment(R.layout.fragment_search) {
                         results.adapter=CityAdapter(requireActivity(),lifecycleScope,cityDao,it.data)
                     }
                     is DataState.Error -> {
-                        Log.e("Error",it.exception.toString())
+                        Toast.makeText(requireContext(),"Something went wrong",Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                     }

@@ -25,6 +25,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
+// Service which get current weather data for location and show notification whit current temprature
 class DailyNotificationService : LifecycleService() {
     var location :String?=null
     @Inject

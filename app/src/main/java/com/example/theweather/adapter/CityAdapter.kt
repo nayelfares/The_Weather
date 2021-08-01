@@ -51,6 +51,5 @@ class CityAdapter(val activity: Activity,
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var cityName: TextView = itemView.cityName
-
     }
 }

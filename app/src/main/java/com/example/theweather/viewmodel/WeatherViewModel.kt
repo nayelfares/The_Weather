@@ -56,7 +56,7 @@ constructor(
         get() = _currentWeatherDataState
 
 
-    fun getSuggestionsUpdateStates(query: String) {
+    private fun getSuggestionsUpdateStates(query: String) {
         viewModelScope.launch {
             weatherRepo.getSuggestions(query)
                 .onEach { dataState ->
@@ -65,7 +65,7 @@ constructor(
         }
     }
 
-    fun getCurrentWeatherUpdateStates(query: String) {
+    private fun getCurrentWeatherUpdateStates(query: String) {
         viewModelScope.launch {
             weatherRepo.getCurrentWeather(query)
                 .onEach { dataState ->

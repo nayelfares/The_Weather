@@ -1,35 +1,29 @@
 package com.example.theweather.adapter
 
 import android.app.Activity
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.theweather.MainActivity
 import com.example.theweather.R
-import com.example.theweather.model.City
 import com.example.theweather.room.CityCacheEntity
 import com.example.theweather.room.CityDao
-import com.example.theweather.room.CurrentWeatherDao
-import com.example.theweather.room.toCityCacheEntity
 import com.example.theweather.ui.CurrentWeatherFragment
 import com.example.theweather.ui.FavoritCities
-import kotlinx.android.synthetic.main.city_item.view.*
 import kotlinx.android.synthetic.main.city_item.view.cityName
 import kotlinx.android.synthetic.main.favorite_city_item.view.*
 import kotlinx.coroutines.*
-import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
-class FavoriteCityAdapter(val activity: Activity,
-                          val favoritCities: FavoritCities,
-                          val lifecycleScope: CoroutineScope,
-                          var cityDao:CityDao,
-                          val cities: ArrayList<CityCacheEntity>
+class FavoriteCityAdapter(
+    private val activity: Activity,
+    private val favoritCities: FavoritCities,
+    private val lifecycleScope: CoroutineScope,
+    var cityDao:CityDao,
+    val cities: ArrayList<CityCacheEntity>
                   ): RecyclerView.Adapter<FavoriteCityAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: FavoriteCityAdapter.ViewHolder, position: Int) {
 
@@ -38,7 +32,7 @@ class FavoriteCityAdapter(val activity: Activity,
         holder.itemView.setOnClickListener {
             favoritCities.dismiss()
             (activity as MainActivity).supportFragmentManager.popBackStackImmediate()
-            (activity as MainActivity).addFragmentFromMain(CurrentWeatherFragment.newInstance(cities[position].url))
+            activity.addFragmentFromMain(CurrentWeatherFragment.newInstance(cities[position].url))
         }
 
         holder.delete.setOnClickListener {
@@ -66,6 +60,5 @@ class FavoriteCityAdapter(val activity: Activity,
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var cityName   = itemView.cityName
         internal var delete     = itemView.delete
-
     }
 }

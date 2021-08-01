@@ -34,11 +34,11 @@ data class CurrentWeatherCacheEntity(
 
 fun CurrentWeatherResponse.toCurrentWeatherCacheEntity(id:String):CurrentWeatherCacheEntity {
     return CurrentWeatherCacheEntity(
-        url = id,
-        icon = this.current.condition.icon,
-        text = this.current.condition.text,
-        temp_c = this.current.temp_c.toString(),
-        name = this.location.name,
+        url      = id,
+        icon     = this.current.condition.icon,
+        text     = this.current.condition.text,
+        temp_c   = this.current.temp_c.toString(),
+        name     = this.location.name,
         humidity = this.humidity.toString(),
         wind_kph = this.wind_kph.toString()
     )

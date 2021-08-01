@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -37,6 +36,7 @@ import javax.inject.Inject
 class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
     private var location: String? = null
     private var currentWeather:CurrentWeatherCacheEntity?=null
+    private var currentWeatherResponse:CurrentWeatherResponse?=null
     @Inject
     lateinit var weatherViewModel: WeatherViewModel
 
@@ -54,13 +54,36 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeObservers()
+        celsius.isSelected = true
+        fahrenheit.isSelected = false
+        celsius.setOnClickListener {
+            celsius.isSelected = true
+            fahrenheit.isSelected = false
+            if (currentWeather!=null)
+                tempratureC.text = currentWeather!!.temp_c
+            else
+                tempratureC.text = currentWeatherResponse!!.current.temp_c.toString()
+            unit.text = "c"
+        }
+        fahrenheit.setOnClickListener {
+            celsius.isSelected = false
+            fahrenheit.isSelected = true
+            if (currentWeather!=null)
+                tempratureC.text = (currentWeather!!.temp_c.toFloat()*1.8+32).toInt().toString()
+            else
+                tempratureC.text = (currentWeatherResponse!!.current.temp_c*1.8+32).toInt().toString()
+            unit.text = "f"
+        }
+        // Search for new location
         addCity.setOnClickListener {
             (requireActivity() as MainActivity).replaceFragmentFromMain(SearchFragment.newInstance())
         }
+        //Show Bottom sheet that caonains favorite cities
         selectCity.setOnClickListener {
             FavoritCities.newInstance().show(requireActivity().supportFragmentManager,"Favorite Cities")
         }
         swipToRefresh.setOnRefreshListener {
+            //Pull to refresh implementation
             if (currentWeather==null)
                 lifecycleScope.launch {
                     weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
@@ -76,6 +99,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
                 weatherViewModel.userIntent.send(WeatherIntent.GetCurrentWeather(location!!))
             }
         else {
+            //Show current weather data from cache
             Glide.with(requireActivity())
                 .load("http:/"+currentWeather!!.icon)
                 .into(icon)
@@ -86,15 +110,18 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
             wind.text= currentWeather!!.wind_kph
         }
     }
-
+// receiving data from API
     private fun subscribeObservers() {
         weatherViewModel.currentWeatherDataState.observe(
             viewLifecycleOwner, {
                 when (it) {
                     is DataState.Success<CurrentWeatherResponse> -> {
+                        currentWeatherResponse = it.data
+                        //Caching current weather
                         lifecycleScope.launch {
                             currentWeatherDao.insert(it.data.toCurrentWeatherCacheEntity(location!!))
                         }
+                        //Show current weather data
                         Glide.with(requireActivity())
                             .load("http:/"+it.data.current.condition.icon)
                             .into(icon)
@@ -104,7 +131,7 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
                         humidity.text = it.data.humidity.toString()
                         wind.text= it.data.wind_kph.toString()
                         loading.visibility = View.GONE
-
+                        //Create Daily Notification
                         val alarmManager =
                             requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         val pendingIntent = PendingIntent.getService(
@@ -114,8 +141,8 @@ class CurrentWeatherFragment : Fragment(R.layout.fragment_current_weather) {
                         )
                         val calendar = Calendar.getInstance()
                         calendar.set(Calendar.SECOND, 0)
-                        calendar.set(Calendar.MINUTE, 8)
-
+                        calendar.set(Calendar.MINUTE, 0)
+                        calendar.set(Calendar.HOUR_OF_DAY, 6)
                         alarmManager.setInexactRepeating(
                             AlarmManager.RTC_WAKEUP,
                             calendar.timeInMillis, 0, pendingIntent

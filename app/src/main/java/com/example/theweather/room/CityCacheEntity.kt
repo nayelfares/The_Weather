@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.theweather.model.City
-import com.example.theweather.model.CurrentWeatherResponse
 import java.io.Serializable
 
 @Entity(tableName = "cities")
@@ -35,12 +34,12 @@ data class CityCacheEntity(
 
 fun City.toCityCacheEntity():CityCacheEntity {
     return CityCacheEntity(
-        id = this.id,
-        name = this.name,
-        region = this.region,
+        id      = this.id,
+        name    = this.name,
+        region  = this.region,
         country = this.country,
-        lat = this.lat,
-        lon = this.lon,
-        url = this.url
+        lat     = this.lat,
+        lon     = this.lon,
+        url     = this.url
     )
 }
